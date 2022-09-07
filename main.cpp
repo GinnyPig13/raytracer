@@ -4,23 +4,33 @@
 #include "ray.h"
 
 //Determines if ray intersects sphere through positive discriminant
-bool hit_sphere(const vec3& center, double radius, const ray& r) {
+double hit_sphere(const vec3& center, double radius, const ray& r) {
     vec3 rayOrigin_sphereCenter = r.origin() - center;
-    double a = dot(r.direction(), r.direction());
-    double b = 2.0 * dot(rayOrigin_sphereCenter, r.direction());
-    double c = dot(rayOrigin_sphereCenter, rayOrigin_sphereCenter) - radius*radius;
-    double discriminant = b*b - 4*a*c;
-    return (discriminant > 0);
+    double a = r.direction().length_squared();
+    double half_b = dot(rayOrigin_sphereCenter, r.direction());
+    double c = rayOrigin_sphereCenter.length_squared() - radius*radius;
+    double discriminant = half_b*half_b - a*c;
+    if (discriminant < 0)
+    {
+        return -1.0;
+    }
+    else
+    {
+        return (-half_b - sqrt(discriminant)) / a;
+    }
+    ;
 }
 
 vec3 ray_color(const ray &r) {
-    if (hit_sphere(vec3(0,0,-1),0.5, r))
+    double t = hit_sphere(vec3(0,0,-1), 0.5, r);
+    if (t > 0.0)
     {
-        return vec3(0,0,1);
+        vec3 N = unit_vector(r.at(t) - vec3(0,0,-1));
+        return 0.5*vec3(N.x()+1, N.y()+1, N.z()+1);
     }
     
     vec3 unit_direction = unit_vector(r.direction());
-    double t = 0.5*(unit_direction.y() + 1.0);
+    t = 0.5*(unit_direction.y() + 1.0);
     return (1.0 - t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
 }
 
