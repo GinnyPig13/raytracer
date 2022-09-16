@@ -1,36 +1,20 @@
 #include <iostream>
-#include "vec3.h"
+
+#include "misc_constants.h"
 #include "color.h"
-#include "ray.h"
+#include "hittable_list.h"
+#include "sphere.h"
+#include "camera.h"
 
-//Determines if ray intersects sphere through positive discriminant
-double hit_sphere(const vec3& center, double radius, const ray& r) {
-    vec3 rayOrigin_sphereCenter = r.origin() - center;
-    double a = r.direction().length_squared();
-    double half_b = dot(rayOrigin_sphereCenter, r.direction());
-    double c = rayOrigin_sphereCenter.length_squared() - radius*radius;
-    double discriminant = half_b*half_b - a*c;
-    if (discriminant < 0)
+vec3 ray_color(const ray& r, const hittable& world) 
+{
+    hit_record rec;
+    if (world.hit(r, 0, infinity, rec)) 
     {
-        return -1.0;
+        return 0.5 * (rec.normal + vec3(1, 1, 1));
     }
-    else
-    {
-        return (-half_b - sqrt(discriminant)) / a;
-    }
-    ;
-}
-
-vec3 ray_color(const ray &r) {
-    double t = hit_sphere(vec3(0,0,-1), 0.5, r);
-    if (t > 0.0)
-    {
-        vec3 N = unit_vector(r.at(t) - vec3(0,0,-1));
-        return 0.5*vec3(N.x()+1, N.y()+1, N.z()+1);
-    }
-    
     vec3 unit_direction = unit_vector(r.direction());
-    t = 0.5*(unit_direction.y() + 1.0);
+    double t = 0.5*(unit_direction.y() + 1.0);
     return (1.0 - t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
 }
 
@@ -40,31 +24,31 @@ int main(){
     const double aspect_ratio = 16.0 / 9.0;
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const int samples_per_pixel = 100;
 
-    //Camera
-    double viewport_height = 2.0;
-    double viewport_width = aspect_ratio * viewport_height;
-    double focal_length = 1.0;
-
-    vec3 origin = vec3(0, 0, 0);
-    vec3 horizontal = vec3(viewport_width, 0, 0);
-    vec3 vertical = vec3(0, viewport_height, 0);
-    vec3 lower_left_corner = origin - horizontal/2 - vertical/2 - vec3(0, 0, focal_length);
+    //World
+    hittable_list world;
+    world.add(make_shared<sphere>(vec3(0, 0, -1), 0.5));
+    world.add(make_shared<sphere>(vec3(0, -100.5, -1), 100));
     
+    //Camera
+    camera cam;
+
     // Render
 
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-    for (int j = image_height - 1; j >= 0; --j)
-    {
+    for (int j = image_height - 1; j >= 0; --j){
         std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
-        for (int i = 0; i < image_width; ++i)
-        {
-            double u = double(i) / (image_width - 1);
-            double v = double(j) / (image_height - 1);
-            ray r(origin, lower_left_corner + u*horizontal + v*vertical - origin);
-            vec3 pixel_color = ray_color(r);
-            write_color(std::cout, pixel_color);
+        for (int i = 0; i < image_width; ++i){
+            vec3 pixel_color(0, 0, 0);
+            for (int s = 0; s < samples_per_pixel; ++s) {
+                double u = (i + random_double()) / (image_width - 1);
+                double v = (j + random_double()) / (image_height - 1);
+                ray r = cam.get_ray(u, v);
+                pixel_color += ray_color(r, world);
+            }
+            write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
 

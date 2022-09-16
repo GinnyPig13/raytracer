@@ -3,8 +3,6 @@
 #include <cmath>
 #include <iostream>
 
-//using std::sqrt;
-
 class vec3 {
     public:
         double comp[3];
