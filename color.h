@@ -4,7 +4,8 @@
 
 #include <iostream>
 
-void write_color(std::ostream &out, vec3 pixel_color, int samples_per_pixel) {
+void write_color(std::ostream &out, vec3 pixel_color, int samples_per_pixel) 
+{
     double r = pixel_color.x();
     double g = pixel_color.y();
     double b = pixel_color.z();

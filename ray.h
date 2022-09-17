@@ -13,8 +13,9 @@ class ray
         vec3 origin() const {return orig;}
         vec3 direction() const {return dir;}
 
-        //gives you the position T^T
-        vec3 at(double t) const {
+        //gives you the position
+        vec3 at(double t) const 
+        {
             return orig + t*dir;
         }
 

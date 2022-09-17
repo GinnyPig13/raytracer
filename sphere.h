@@ -3,7 +3,8 @@
 #include "hittable.h"
 #include "vec3.h"
 
-class sphere : public hittable {
+class sphere : public hittable 
+{
     public:
         sphere() {}
         sphere(vec3 cen, double r) : center(cen), radius(r) {};
@@ -17,7 +18,8 @@ class sphere : public hittable {
         double radius;    
 };
 
-bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& record) const{
+bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& record) const
+{
     vec3 rayOrigin_sphereCenter = r.origin() - center;
     double a = r.direction().length_squared();
     double half_b = dot(rayOrigin_sphereCenter, r.direction());

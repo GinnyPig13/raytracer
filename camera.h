@@ -2,9 +2,11 @@
 
 #include "misc_constants.h"
 
-class camera {
+class camera 
+{
     public:
-        camera () {
+        camera () 
+        {
             const double aspect_ratio = 16.0 / 9.0;
             const double viewport_height = 2.0;
             const double viewport_width = aspect_ratio * viewport_height;
@@ -16,7 +18,8 @@ class camera {
             lower_left_corner = origin - horizontal/2 - vertical/2 - vec3(0, 0, focal_length);
         }
 
-        ray get_ray(double u, double v) const{
+        ray get_ray(double u, double v) const
+        {
             return ray(origin, lower_left_corner + u*horizontal + v*vertical - origin);
         }
     
