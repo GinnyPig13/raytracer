@@ -7,12 +7,23 @@
 #include "camera.h"
 
 //Determines the normal ray when hit with the raytrace and records the hit
-vec3 ray_color(const ray& r, const hittable& world) 
+vec3 color_of_ray(const ray& r, const hittable& world, int depth) 
 {
     hit_record rec;
+    
+    //If we've exceeded the ray bounce limit, no more light is diffused
+    if (depth <= 0)
+    {
+        return vec3(0, 0, 0);
+    }
+
     if (world.hit(r, 0, infinity, rec)) 
     {
-        return 0.5 * (rec.normal + vec3(1, 1, 1));
+        //generating a random point in a unit sphere relative to the hit point
+        vec3 diffuse_point = rec.point + rec.normal + random_point_in_unit_sphere();
+        //0.5 shifts the color darker for shadows
+        //Simulates light bouncing randomly
+        return 0.5 * color_of_ray(ray(rec.point, diffuse_point - rec.point), world, depth - 1);
     }
     vec3 unit_direction = unit_vector(r.direction());
     double t = 0.5*(unit_direction.y() + 1.0);
@@ -26,6 +37,7 @@ int main()
     const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 100;
+    const int max_depth = 50;
 
     //World list and contents
     hittable_list world;
@@ -50,7 +62,7 @@ int main()
                 double u = (i + random_double()) / (image_width - 1);
                 double v = (j + random_double()) / (image_height - 1);
                 ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, world);
+                pixel_color += color_of_ray(r, world, max_depth);
             }
            //Averages the samples per pixel rays' results to a rasterized color for said pixel
             write_color(std::cout, pixel_color, samples_per_pixel);

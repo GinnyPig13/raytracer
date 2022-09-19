@@ -16,13 +16,13 @@ const double pi = 3.1415926535897932385;
     }
     
     //Random decimal between [0, 1)
-    inline double random_double()
+    inline static double random_double()
     {
         return rand() / (RAND_MAX + 1.0);
     }
 
     //Random real number between a [min, max)
-    inline double random_double(double min, double max)
+    inline static double random_double(double min, double max)
     {
         return min + (max - min) * random_double();
     }

@@ -52,6 +52,16 @@ class vec3
             return comp[0]*comp[0] + comp[1]*comp[1] + comp[2]*comp[2];
         }
 
+        inline static vec3 random() 
+        {
+            return vec3(random_double(), random_double(), random_double());
+        }
+
+        inline static vec3 random(double min, double max)
+        {
+            return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
+        }
+
 };
 
 //utility functions
@@ -108,4 +118,14 @@ inline vec3 cross(const vec3 &u, const vec3 &v)
 inline vec3 unit_vector(const vec3 &v) 
 {
     return v / v.length();
+}
+
+vec3 random_point_in_unit_sphere()
+{
+    while (true)
+    {
+        vec3 p = vec3::random(-1, 1);
+        if(p.length_squared() >= 1) continue;
+        return p;
+    }
 }
