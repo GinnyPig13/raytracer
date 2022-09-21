@@ -17,10 +17,10 @@ vec3 color_of_ray(const ray& r, const hittable& world, int depth)
         return vec3(0, 0, 0);
     }
 
-    if (world.hit(r, 0, infinity, rec)) 
+    if (world.hit(r, 0.001, infinity, rec)) 
     {
         //generating a random point in a unit sphere relative to the hit point
-        vec3 diffuse_point = rec.point + rec.normal + random_point_in_unit_sphere();
+        vec3 diffuse_point = rec.point + rec.normal + random_unit_vector();
         //0.5 shifts the color darker for shadows
         //Simulates light bouncing randomly
         return 0.5 * color_of_ray(ray(rec.point, diffuse_point - rec.point), world, depth - 1);

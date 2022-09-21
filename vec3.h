@@ -120,7 +120,7 @@ inline vec3 unit_vector(const vec3 &v)
     return v / v.length();
 }
 
-vec3 random_point_in_unit_sphere()
+inline vec3 random_point_in_unit_sphere()
 {
     while (true)
     {
@@ -128,4 +128,9 @@ vec3 random_point_in_unit_sphere()
         if(p.length_squared() >= 1) continue;
         return p;
     }
+}
+
+vec3 random_unit_vector()
+{
+    return unit_vector(random_point_in_unit_sphere());
 }
