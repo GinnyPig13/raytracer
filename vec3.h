@@ -62,6 +62,13 @@ class vec3
             return vec3(random_double(min, max), random_double(min, max), random_double(min, max));
         }
 
+        bool is_near_zero() const
+        {
+            //Return true if the vector is close to zero in all dimensions.
+            const double smallest_allowed = 1e-8;
+            return (fabs(comp[0]) < smallest_allowed) && (fabs(comp[1]) < smallest_allowed) && (fabs(comp[2]) < smallest_allowed);
+        }
+
 };
 
 //utility functions
