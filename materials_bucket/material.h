@@ -1,6 +1,6 @@
 #pragma once
 
-#include "misc_constants.h"
+#include "../misc_constants.h"
 
 struct hit_record;
 

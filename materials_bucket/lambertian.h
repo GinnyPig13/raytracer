@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hittable.h"
+#include "../hittable.h"
 #include "material.h"
 
 class lambertian : public material
@@ -16,6 +16,7 @@ class lambertian : public material
         {
             vec3 scatter_direction = rec_in.normal + random_unit_vector();
             
+            //Catch degenerate scatter direction
             if (scatter_direction.is_near_zero())
             {
                 scatter_direction = rec_in.normal;

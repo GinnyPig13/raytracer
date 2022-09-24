@@ -5,6 +5,9 @@
 #include "hittable_list.h"
 #include "sphere.h"
 #include "camera.h"
+#include "materials_bucket/material.h"
+#include "materials_bucket/lambertian.h"
+#include "materials_bucket/metal.h"
 
 //Determines the normal ray when hit with the raytrace and records the hit
 vec3 color_of_ray(const ray& r, const hittable& world, int depth) 
@@ -19,11 +22,14 @@ vec3 color_of_ray(const ray& r, const hittable& world, int depth)
 
     if (world.hit(r, 0.001, infinity, rec)) 
     {
-        //generating a random point in a unit sphere relative to the hit point
-        vec3 diffuse_point = rec.point + rec.normal + random_unit_vector();
-        //0.5 shifts the color darker for shadows
-        //Simulates light bouncing randomly
-        return 0.5 * color_of_ray(ray(rec.point, diffuse_point - rec.point), world, depth - 1);
+        ray scattered;
+        vec3 attenuation;
+        if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+        {
+            return attenuation * color_of_ray(scattered, world, depth-1);
+        }
+        return vec3(0, 0, 0);
+        
     }
     vec3 unit_direction = unit_vector(r.direction());
     double t = 0.5*(unit_direction.y() + 1.0);
@@ -41,9 +47,18 @@ int main()
 
     //World list and contents
     hittable_list world;
-    world.add(std::make_shared<sphere>(vec3(0, 0, -1), 0.5));
-    world.add(std::make_shared<sphere>(vec3(0, -100.5, -1), 100));
-    
+
+    auto material_ground = std::make_shared<lambertian>(vec3(0.8, 0.8, 0.0));
+    auto material_center_sphere = std::make_shared<lambertian>(vec3(0.7, 0.3, 0.3));
+    auto material_left_sphere = std::make_shared<metal>(vec3(0.8, 0.8, 0.8));
+    auto material_right_sphere = std::make_shared<metal>(vec3(0.8, 0.6, 0.2)); 
+
+    world.add(std::make_shared<sphere>(vec3(0.0, -100.5, -1.0), 100.0, material_ground));
+    world.add(std::make_shared<sphere>(vec3(0.0, 0.0, -1.0), 0.5, material_center_sphere));
+    world.add(std::make_shared<sphere>(vec3(-1.0, 0.0, -1.0), 0.5, material_left_sphere));
+    world.add(std::make_shared<sphere>(vec3(1.0, 0.0, -1.0), 0.5, material_right_sphere));
+
+
     //Camera parameters
     camera cam;
 
