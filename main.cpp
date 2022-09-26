@@ -48,8 +48,8 @@ int main()
     //World list and contents
     hittable_list world;
 
-    auto material_ground = std::make_shared<lambertian>(vec3(0.8, 0.8, 0.0));
-    auto material_center_sphere = std::make_shared<lambertian>(vec3(0.7, 0.3, 0.3));
+    auto material_ground = std::make_shared<lambertian>(vec3(0.08, 0.33, 0.08));
+    auto material_center_sphere = std::make_shared<lambertian>(vec3(0.0, 0.36, 0.72));
     auto material_left_sphere = std::make_shared<metal>(vec3(0.8, 0.8, 0.8));
     auto material_right_sphere = std::make_shared<metal>(vec3(0.8, 0.6, 0.2)); 
 
