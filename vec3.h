@@ -146,3 +146,11 @@ vec3 reflect(const vec3& v, const vec3& n)
 {
     return v - 2*dot(v, n)*n;
 }
+
+vec3 refract(const vec3& incidentRay, const vec3& normal, double initialIndex_over_materialIndex) 
+{
+    double cos_theta = fmin(dot(-incidentRay, normal), 1.0);
+    vec3 refracted_ray_perpendicular = initialIndex_over_materialIndex * (incidentRay + cos_theta * normal);
+    vec3 refracted_ray_parallel = -sqrt(fabs(1.0 - refracted_ray_perpendicular.length_squared())) * normal;
+    return refracted_ray_perpendicular + refracted_ray_parallel;
+}

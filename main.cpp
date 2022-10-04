@@ -8,6 +8,7 @@
 #include "materials_bucket/material.h"
 #include "materials_bucket/lambertian.h"
 #include "materials_bucket/metal.h"
+#include "materials_bucket/dielectric.h"
 
 //Determines the normal ray when hit with the raytrace and records the hit
 vec3 color_of_ray(const ray& r, const hittable& world, int depth) 
@@ -50,8 +51,8 @@ int main()
 
     auto material_ground = std::make_shared<lambertian>(vec3(0.08, 0.33, 0.08));
     auto material_center_sphere = std::make_shared<lambertian>(vec3(0.0, 0.36, 0.72));
-    auto material_left_sphere = std::make_shared<metal>(vec3(0.8, 0.8, 0.8));
-    auto material_right_sphere = std::make_shared<metal>(vec3(0.8, 0.6, 0.2)); 
+    auto material_left_sphere = std::make_shared<dielectric>(1.5);
+    auto material_right_sphere = std::make_shared<metal>(vec3(0.8, 0.6, 0.2), 1.0); 
 
     world.add(std::make_shared<sphere>(vec3(0.0, -100.5, -1.0), 100.0, material_ground));
     world.add(std::make_shared<sphere>(vec3(0.0, 0.0, -1.0), 0.5, material_center_sphere));
