@@ -61,7 +61,7 @@ int main()
 
 
     //Camera parameters
-    camera cam;
+    camera cam(vec3(-2, 2, 1), vec3(0, 0, -1), vec3(0, 1, 0), 90, aspect_ratio);
 
     // Render process
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
