@@ -142,6 +142,17 @@ vec3 random_unit_vector()
     return unit_vector(random_point_in_unit_sphere());
 }
 
+inline vec3 random_point_in_unit_disk()
+{
+    while (true)
+    {
+        vec3 p = vec3(random_double(-1, 1), random_double(-1, 1), 0);
+        if (p.length_squared() < 1)
+            return p;        
+    }
+    
+}
+
 vec3 reflect(const vec3& v, const vec3& n)
 {
     return v - 2*dot(v, n)*n;

@@ -36,32 +36,83 @@ vec3 color_of_ray(const ray& r, const hittable& world, int depth)
     double t = 0.5*(unit_direction.y() + 1.0);
     return (1.0 - t)*vec3(1.0, 1.0, 1.0) + t*vec3(0.5, 0.7, 1.0);
 }
-
+ 
 int main()
 {
     //Image parameters
     const double aspect_ratio = 16.0 / 9.0;
-    const int image_width = 400;
+    const int image_width = 1200;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 100;
+    const int samples_per_pixel = 500;
     const int max_depth = 50;
-
+    
     //World list and contents
     hittable_list world;
 
+    //Ground material
     auto material_ground = std::make_shared<lambertian>(vec3(0.08, 0.33, 0.08));
-    auto material_center_sphere = std::make_shared<lambertian>(vec3(0.0, 0.36, 0.72));
-    auto material_left_sphere = std::make_shared<dielectric>(1.5);
-    auto material_right_sphere = std::make_shared<metal>(vec3(0.8, 0.6, 0.2), 1.0); 
+    world.add(std::make_shared<sphere>(vec3(0.0, -1000.0, -1.0), 1000.0, material_ground));
 
-    world.add(std::make_shared<sphere>(vec3(0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(std::make_shared<sphere>(vec3(0.0, 0.0, -1.0), 0.5, material_center_sphere));
-    world.add(std::make_shared<sphere>(vec3(-1.0, 0.0, -1.0), 0.5, material_left_sphere));
-    world.add(std::make_shared<sphere>(vec3(1.0, 0.0, -1.0), 0.5, material_right_sphere));
+    //Object material
+    for (int a = -11; a < 11; a++)
+    {
+        for (int b = -11; b < 11; b++)
+        {
+            double choose_material = random_double();
+            vec3 center(a + 0.9*random_double(), 0.2, b + 0.9*random_double());
 
+            if ((center - vec3(4, 0.2, 0)).length() > 0.9)
+            {
+                std::shared_ptr<material> sphere_material;
+
+                if (choose_material < 0.8)
+                {
+                    //diffuse
+                    vec3 albedo = vec3::random() * vec3::random();
+                    sphere_material = std::make_shared<lambertian>(albedo);
+                    world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                }
+
+                else if (choose_material < 0.95)
+                {
+                    //metal
+                    vec3 albedo = vec3::random(0.5, 1);
+                    double fuzz = random_double(0, 0.5);
+                    sphere_material = std::make_shared<metal>(albedo, fuzz);
+                    world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                }
+
+                else
+                {
+                    //glass
+                    sphere_material = std::make_shared<dielectric>(1.5);
+                    world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                }               
+                
+            }
+            
+        }
+        
+    }
+    
+    auto material1 = std::make_shared<dielectric>(1.5);
+    world.add(std::make_shared<sphere>(vec3(0.0, 1.0, 0.0), 1.0, material1));
+
+    auto material2 = std::make_shared<lambertian>(vec3(0.0, 0.36, 0.72));
+    world.add(std::make_shared<sphere>(vec3(-4.0, 1.0, 0.0), 1.0, material2));
+
+    auto material3 = std::make_shared<metal>(vec3(0.7, 0.6, 0.5), 0.0); 
+    world.add(std::make_shared<sphere>(vec3(4.0, 1.0, 0.0), 1.0, material3));
 
     //Camera parameters
-    camera cam(vec3(-2, 2, 1), vec3(0, 0, -1), vec3(0, 1, 0), 90, aspect_ratio);
+    const vec3 look_from = vec3(13, 2, 3);
+    const vec3 look_at = vec3(0, 0, 0);
+    const vec3 view_up = vec3(0, 1, 0);
+    const int field_of_view = 20;
+    const double defocus_angle = 0.6;
+    const double focus_distance = 10.0;
+
+    camera cam(look_from, look_at, view_up, field_of_view, aspect_ratio, defocus_angle, focus_distance);
 
     // Render process
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
