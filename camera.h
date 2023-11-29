@@ -43,7 +43,9 @@ class camera
         ray get_ray(double u, double v) const
         {
             vec3 defocus_ray_origin = (m_defocus_angle <= 0) ? origin : defocus_disk_sample();
-            return ray(defocus_ray_origin, lower_left_corner + u*viewport_horizontal + v*viewport_vertical - defocus_ray_origin);
+            double ray_time = random_double();
+
+            return ray(defocus_ray_origin, lower_left_corner + u*viewport_horizontal + v*viewport_vertical - defocus_ray_origin, ray_time);
         }
     
     private:

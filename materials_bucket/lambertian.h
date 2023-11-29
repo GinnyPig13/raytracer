@@ -22,7 +22,7 @@ class lambertian : public material
                 scatter_direction = rec_in.normal;
             }
             
-            scattered_out = ray(rec_in.point, scatter_direction);
+            scattered_out = ray(rec_in.point, scatter_direction, r_in.time());
             attenuation_out = albedo;
             return true;
         }

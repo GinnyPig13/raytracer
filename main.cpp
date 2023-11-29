@@ -41,9 +41,9 @@ int main()
 {
     //Image parameters
     const double aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1200;
+    const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 500;
+    const int samples_per_pixel = 100;
     const int max_depth = 50;
     
     //World list and contents
@@ -70,7 +70,8 @@ int main()
                     //diffuse
                     vec3 albedo = vec3::random() * vec3::random();
                     sphere_material = std::make_shared<lambertian>(albedo);
-                    world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                    vec3 center2 = center + vec3(0, random_double(0, 0.5), 0);
+                    world.add(std::make_shared<sphere>(center, center2, 0.2, sphere_material));
                 }
 
                 else if (choose_material < 0.95)
