@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ray.h"
+#include "interval.h"
 #include "misc_constants.h"
 
 class material;
@@ -24,5 +25,5 @@ class hittable
 {
     //Uses the ray within a set min and max time value to record whether an object was hit
     public:
-        virtual bool hit(const ray& r, double t_min, double t_max, hit_record& record) const = 0;
+        virtual bool hit(const ray& r, interval ray_t, hit_record& record) const = 0;
 };

@@ -17,10 +17,10 @@ class sphere : public hittable
         }
 
         virtual bool hit(
-            const ray& r, double t_min, double t_max, hit_record& rec
+            const ray& r, interval ray_t, hit_record& rec
         ) const override;
 
-    public:
+    private:
         vec3 center1;
         double radius;
         std::shared_ptr<material> mat_ptr;
@@ -33,7 +33,7 @@ class sphere : public hittable
         }   
 };
 
-bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& record) const
+bool sphere::hit(const ray& r, interval ray_t, hit_record& record) const
 {
     vec3 center = is_moving ? sphere_center(r.time()) : center1;
     vec3 rayOrigin_sphereCenter = r.origin() - center;
@@ -46,10 +46,10 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& record) c
     double sqrtd = sqrt(discriminant);
 
     double root = (-half_b - sqrtd) / a;
-    if (root < t_min || t_max < root)
+    if (root < ray_t.min || ray_t.max < root)
     {
         root = (-half_b + sqrtd) / a;
-        if (root < t_min || t_max < root)
+        if (root < ray_t.min || ray_t.max < root)
             return false;
         
     }

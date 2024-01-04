@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "misc_constants.h"
+#include "interval.h"
 #include "color.h"
 #include "hittable_list.h"
 #include "sphere.h"
@@ -21,7 +22,7 @@ vec3 color_of_ray(const ray& r, const hittable& world, int depth)
         return vec3(0, 0, 0);
     }
 
-    if (world.hit(r, 0.001, infinity, rec)) 
+    if (world.hit(r, interval(0, infinity), rec)) 
     {
         ray scattered;
         vec3 attenuation;
